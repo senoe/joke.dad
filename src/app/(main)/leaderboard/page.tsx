@@ -14,12 +14,19 @@ import {
 } from '@/components/ui/table';
 import { prisma } from '@/server/db';
 import { ArrowUpIcon } from 'lucide-react';
+import { unstable_cache as cache } from 'next/cache';
 
 export default async function LeaderboardPage() {
-  const jokes = await prisma.joke.findMany({
-    orderBy: { score: 'desc' },
-    take: 5
-  });
+  const getTopJokes = cache(
+    async () =>
+      prisma.joke.findMany({
+        orderBy: { score: 'desc' },
+        take: 5
+      }),
+    [],
+    { revalidate: 900 }
+  );
+  const jokes = await getTopJokes();
   return (
     <>
       <div className="space-y-3 text-center">
@@ -44,7 +51,9 @@ export default async function LeaderboardPage() {
               <HoverCardTrigger asChild>
                 <TableRow>
                   <TableCell>#{joke.id}</TableCell>
-                  <TableCell>{joke.createdAt.toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {new Date(joke.createdAt).toLocaleDateString()}
+                  </TableCell>
                   <TableCell className="font-medium">{joke.name}</TableCell>
                   <TableCell className="flex items-center">
                     <ArrowUpIcon className="mr-1 h-4 w-4" />
@@ -61,7 +70,7 @@ export default async function LeaderboardPage() {
                     <p className="text-sm">{joke.content}</p>
                     <div className="flex items-center pt-2">
                       <span className="text-xs text-muted-foreground">
-                        Added {joke.createdAt.toLocaleDateString()}
+                        Added {new Date(joke.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
