@@ -3,6 +3,7 @@ import { Header } from '@/components/ui/header';
 import { webMetadata } from '@/config/web';
 import { cn } from '@/lib/utils';
 import '@/styles/globals.css';
+import { Analytics } from '@vercel/analytics/react';
 import { Inter as FontSans } from 'next/font/google';
 import { type PropsWithChildren } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <Footer />
         </div>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
