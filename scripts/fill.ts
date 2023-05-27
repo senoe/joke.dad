@@ -14,10 +14,7 @@ const schema = z.array(
 const fill = async () => {
   const data = await readFile(__dirname + '/jokes.json', 'utf8');
   const jokes = schema.parse(JSON.parse(data));
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
   const result = await prisma.joke.createMany({ data: jokes });
-
   console.log('Result:', result);
 };
 
